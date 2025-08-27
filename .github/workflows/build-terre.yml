@@ -1,4 +1,4 @@
-name: Build WebGAL Terre
+name: Build WebGAL Terre For Intel Mac
 
 on:
   workflow_dispatch:
@@ -12,54 +12,9 @@ on:
       - synchronize
 
 jobs:
-  build-linux:
-    name: Build Linux Binary
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: package.json
-          cache: 'yarn'
-      - name: Build
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: sh release-linux.sh
-      - name: Compress
-        run: 7z a -tzip release/WebGAL_Terre_Linux.zip release/*
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: WebGAL_Terre_Linux
-          path: release/WebGAL_Terre_Linux.zip
-  build-arm64:
-    name: Build Linux ARM64 Binary
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: package.json
-          cache: 'yarn'
-      - name: Build
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: sh release-linux-arm64.sh         
-      - name: Compress
-        run: 7z a -tzip release/WebGAL_Terre_Linux_Arm64.zip release/*
-      
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: WebGAL_Terre_Linux_Arm64
-          path: release/WebGAL_Terre_Linux_Arm64.zip
-  build-mac:
+  build-mac-intel:
     name: Build MacOS Binary
-    runs-on: macos-14
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,46 +34,3 @@ jobs:
         with:
           name: WebGAL_Terre_Mac
           path: release/WebGAL_Terre_Mac.zip
-  build-windows:
-    name: Build Windows Binary
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: package.json
-          cache: 'yarn'
-      - name: Build
-        shell: bash
-        run: ./release.sh
-      - name: Compress
-        run: 7z a -tzip release/WebGAL_Terre_Windows.zip release/*  
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: WebGAL_Terre_Windows
-          path: release/WebGAL_Terre_Windows.zip
-  build-windows-nsis:
-    name: Build Windows Setup
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: package.json
-          cache: 'yarn'
-      - name: Build
-        shell: bash
-        run: ./release.sh
-      - name: Build Setup
-        shell: bash
-        run: mkdir bundle && yarn nsis-bundle
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: WebGAL_Terre_Windows_Setup
-          path: bundle/WebGal_Terre_Setup.exe
